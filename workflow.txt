@@ -1,0 +1,421 @@
+// Users table (handles all user types)
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(STUDENT)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student   Student?
+  teacher   Teacher?
+  principal Principal?
+
+  @@map("users")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  PRINCIPAL
+}
+
+// Student specific data
+model Student {
+  id           String    @id @default(uuid())
+  userId       String    @unique
+  admissionNo  String    @unique
+  classId      String
+  dateOfBirth  DateTime
+  gender       Gender
+  address      String
+  phoneNumber  String
+  guardianName String
+  guardianPhone String
+  compulsoryClubId String?
+  electiveClubId   String?
+  
+  // Relations
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class        Class     @relation(fields: [classId], references: [id])
+  compulsoryClub Club?   @relation("CompulsoryClubMembers", fields: [compulsoryClubId], references: [id])
+  electiveClub   Club?   @relation("ElectiveClubMembers", fields: [electiveClubId], references: [id])
+  grades       Grade[]
+  examSubmissions ExamSubmission[]
+  payments     Payment[]
+  groupMembers GroupMember[]
+
+  @@map("students")
+}
+
+// Teacher specific data
+model Teacher {
+  id          String @id @default(uuid())
+  userId      String @unique
+  employeeId  String @unique
+  classId     String? // Class teacher assignment
+  phoneNumber String
+  address     String
+  salary      Decimal @default(0)
+  isPaid      Boolean @default(false)
+  lastPaidAt  DateTime?
+  
+  // Relations
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedClass Class? @relation(fields: [classId], references: [id])
+  subjects    TeacherSubject[]
+  exams       Exam[]
+  grades      Grade[]
+  groupAdmins GroupAdmin[]
+
+  @@map("teachers")
+}
+
+// Principal specific data
+model Principal {
+  id     String @id @default(uuid())
+  userId String @unique
+  
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("principals")
+}
+
+// Classes (JSS1 to SS3)
+model Class {
+  id       String @id @default(uuid())
+  name     String @unique // JSS1, JSS2, JSS3, SS1, SS2, SS3
+  level    ClassLevel
+  capacity Int    @default(50)
+  
+  // Relations
+  students Student[]
+  teacher  Teacher[]
+  subjects ClassSubject[]
+  exams    Exam[]
+  groups   Group[]
+
+  @@map("classes")
+}
+
+enum ClassLevel {
+  JSS1
+  JSS2
+  JSS3
+  SS1
+  SS2
+  SS3
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+// Subjects
+model Subject {
+  id          String @id @default(uuid())
+  name        String @unique
+  code        String @unique
+  description String?
+  
+  // Relations
+  teachers    TeacherSubject[]
+  classes     ClassSubject[]
+  exams       Exam[]
+  grades      Grade[]
+
+  @@map("subjects")
+}
+
+// Many-to-many: Teacher-Subject
+model TeacherSubject {
+  id        String @id @default(uuid())
+  teacherId String
+  subjectId String
+  
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, subjectId])
+  @@map("teacher_subjects")
+}
+
+// Many-to-many: Class-Subject
+model ClassSubject {
+  id        String @id @default(uuid())
+  classId   String
+  subjectId String
+  
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, subjectId])
+  @@map("class_subjects")
+}
+
+// Clubs
+model Club {
+  id             String    @id @default(uuid())
+  name           String    @unique
+  type           ClubType
+  description    String?
+  subscriptionFee Decimal  @default(0)
+  term           Term
+  
+  // Relations
+  compulsoryMembers Student[] @relation("CompulsoryClubMembers")
+  electiveMembers   Student[] @relation("ElectiveClubMembers")
+
+  @@map("clubs")
+}
+
+enum ClubType {
+  COMPULSORY
+  ELECTIVE
+}
+
+enum Term {
+  FIRST
+  SECOND
+  THIRD
+}
+
+// Exams and Tests
+model Exam {
+  id          String     @id @default(uuid())
+  title       String
+  type        ExamType
+  subjectId   String
+  classId     String
+  teacherId   String
+  totalMarks  Int        @default(100)
+  duration    Int        // in minutes
+  scheduledAt DateTime
+  isPublished Boolean    @default(false)
+  term        Term
+  session     String     // e.g., "2023/2024"
+  
+  // Relations
+  subject     Subject    @relation(fields: [subjectId], references: [id])
+  class       Class      @relation(fields: [classId], references: [id])
+  teacher     Teacher    @relation(fields: [teacherId], references: [id])
+  questions   Question[]
+  submissions ExamSubmission[]
+  grades      Grade[]
+
+  @@map("exams")
+}
+
+enum ExamType {
+  TEST
+  EXAM
+}
+
+// Exam Questions
+model Question {
+  id       String        @id @default(uuid())
+  examId   String
+  question String
+  type     QuestionType
+  options  Json?         // For multiple choice
+  answer   String        // Correct answer
+  marks    Int           @default(1)
+  order    Int
+
+  // Relations
+  exam     Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+  ESSAY
+}
+
+// Student Exam Submissions
+model ExamSubmission {
+  id        String   @id @default(uuid())
+  examId    String
+  studentId String
+  answers   Json     // Store all answers
+  score     Int?     // Auto-calculated score
+  isGraded  Boolean  @default(false)
+  submittedAt DateTime @default(now())
+  
+  // Relations
+  exam      Exam     @relation(fields: [examId], references: [id])
+  student   Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([examId, studentId])
+  @@map("exam_submissions")
+}
+
+// Grades
+model Grade {
+  id         String      @id @default(uuid())
+  studentId  String
+  subjectId  String
+  examId     String
+  teacherId  String
+  score      Int
+  totalMarks Int
+  percentage Decimal
+  grade      String      // A, B, C, D, F
+  remark     String?
+  term       Term
+  session    String
+  isApproved Boolean     @default(false)
+  isReleased Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  
+  // Relations
+  student    Student     @relation(fields: [studentId], references: [id])
+  subject    Subject     @relation(fields: [subjectId], references: [id])
+  exam       Exam        @relation(fields: [examId], references: [id])
+  teacher    Teacher     @relation(fields: [teacherId], references: [id])
+
+  @@unique([studentId, subjectId, examId])
+  @@map("grades")
+}
+
+// Payments
+model Payment {
+  id          String      @id @default(uuid())
+  studentId   String
+  type        PaymentType
+  amount      Decimal
+  description String
+  term        Term
+  session     String
+  status      PaymentStatus @default(PENDING)
+  reference   String      @unique // Payment gateway reference
+  receiptUrl  String?     // Generated receipt URL
+  paidAt      DateTime?
+  createdAt   DateTime    @default(now())
+  
+  // Relations
+  student     Student     @relation(fields: [studentId], references: [id])
+
+  @@map("payments")
+}
+
+enum PaymentType {
+  SCHOOL_FEES
+  CLUB_FEES
+  EXAM_FEES
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Class Groups (Chat Groups)
+model Group {
+  id        String   @id @default(uuid())
+  classId   String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  class     Class         @relation(fields: [classId], references: [id])
+  members   GroupMember[]
+  admins    GroupAdmin[]
+  messages  GroupMessage[]
+
+  @@map("groups")
+}
+
+// Group Members
+model GroupMember {
+  id        String   @id @default(uuid())
+  groupId   String
+  studentId String
+  joinedAt  DateTime @default(now())
+  
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, studentId])
+  @@map("group_members")
+}
+
+// Group Admins (Teachers and Principal)
+model GroupAdmin {
+  id        String   @id @default(uuid())
+  groupId   String
+  teacherId String
+  role      AdminRole @default(MODERATOR)
+  addedAt   DateTime @default(now())
+  
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, teacherId])
+  @@map("group_admins")
+}
+
+enum AdminRole {
+  SUPER_ADMIN // Principal
+  MODERATOR   // Class Teacher
+}
+
+// Group Messages
+model GroupMessage {
+  id        String   @id @default(uuid())
+  groupId   String
+  senderId  String   // User ID
+  message   String
+  type      MessageType @default(TEXT)
+  fileUrl   String?
+  sentAt    DateTime @default(now())
+  
+  // Relations
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("group_messages")
+}
+
+enum MessageType {
+  TEXT
+  FILE
+  IMAGE
+  ANNOUNCEMENT
+}
+
+// Notifications
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  data      Json?            // Additional data
+  createdAt DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  EXAM_SCHEDULED
+  GRADE_RELEASED
+  PAYMENT_DUE
+  PAYMENT_RECEIVED
+  CLUB_ANNOUNCEMENT
+  GENERAL
+}
