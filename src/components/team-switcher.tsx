@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
+import * as React from "react";
+import { ChevronsUpDown, Plus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -11,28 +11,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function TeamSwitcher({
   teams,
+  plan,
 }: {
   teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
+    name: string;
+    logo: React.ElementType;
+    plan: string;
+  }[];
+  plan?: string;
 }) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const { isMobile } = useSidebar();
+  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
 
   if (!activeTeam) {
-    return null
+    return null;
   }
 
   return (
@@ -49,7 +51,18 @@ export function TeamSwitcher({
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <div className="flex items-center gap-2">
+                  <span className="truncate text-xs text-muted-foreground">
+                    {activeTeam.plan}
+                  </span>
+                  <p className={`truncate text-xs w-14 rounded-2xl flex justify-center px-2 py-0.5 font-medium ${
+                      plan?.toLowerCase() === "paid"
+                        ? "bg-green-500 text-white"
+                        : "bg-red-500 text-white"
+                    }`}>
+                    {plan?.toLowerCase() === "paid" ? "Paid" : "Expired"}
+                  </p>
+                </div>
               </div>
               {/* <ChevronsUpDown className="ml-auto" /> */}
             </SidebarMenuButton>
