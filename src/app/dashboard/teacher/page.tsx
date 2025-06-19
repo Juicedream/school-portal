@@ -1,5 +1,6 @@
 "use server";
 import { AppSidebar } from "@/components/app-sidebar";
+import { TeacherDashboard } from "@/components/dashboards/teacher/TeacherDashboard";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,7 +20,7 @@ export default async function Page() {
   await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
   return (
     <SidebarInset>
-      <h1>Teacher Page</h1>
+      {/* <h1>Teacher Page</h1> */}
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
@@ -40,14 +41,15 @@ export default async function Page() {
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <TeacherDashboard />
+      {/* <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           <div className="bg-muted/50 aspect-video rounded-xl" />
           <div className="bg-muted/50 aspect-video rounded-xl" />
           <div className="bg-muted/50 aspect-video rounded-xl" />
         </div>
         <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
-      </div>
+      </div> */}
     </SidebarInset>
   );
 }

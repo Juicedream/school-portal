@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPlatform - Complete UI System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #2d3748, #4a5568);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            color: #a0aec0;
+            font-size: 0.9em;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #667eea;
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            fill: currentColor;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c53030;
+            transform: translateY(-1px);
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .card-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f7fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+
+        .table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .status.active { background: #c6f6d5; color: #22543d; }
+        .status.pending { background: #fed7d7; color: #742a2a; }
+        .status.completed { background: #bee3f8; color: #2a4365; }
+
+        /* Exam Interface */
+        .exam-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .exam-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .exam-timer {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .question-container {
+            padding: 30px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .question-number {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            color: #2d3748;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            margin-bottom: 15px;
+        }
+
+        .option label {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option label:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .exam-nav {
+            display: flex;
+            justify-content: between;
+            padding: 25px;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+            transform: translateY(-1px);
+        }
+
+        /* Payment Interface */
+        .payment-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .payment-form {
+            padding: 30px;
+        }
+
+        .payment-summary {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: between;
+            margin-bottom: 10px;
+        }
+
+        .summary-total {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .chart {
+            height: 300px;
+            background: linear-gradient(45deg, #f7fafc, #edf2f7);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+                padding: 20px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Colors for Different Dashboards */
+        .admin-theme { --primary: #667eea; --secondary: #764ba2; }
+        .teacher-theme { --primary: #48bb78; --secondary: #38a169; }
+        .student-theme { --primary: #ed8936; --secondary: #dd6b20; }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <!-- <div id="login" class="page active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <h1>EduPlatform</h1>
+                    <p>Welcome back! Please sign in to continue.</p>
+                </div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Login as</label>
+                        <select id="role" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="admin">Administrator</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="page">
+        <div class="dashboard admin-theme">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Admin Panel</h2>
+                    <p>System Administrator</p>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" onclick="showAdminSection('overview')">
+                            <span class="nav-icon">📊</span>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showAdminSection('users')">
+                            <span class="nav-icon">👥</span>
+                            User Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showAdminSection('courses')">
+                            <span class="nav-icon">📚</span>
+                            Course Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showPage('reports')">
+                            <span class="nav-icon">📈</span>
+                            Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showPage('payments')">
+                            <span class="nav-icon">💳</span>
+                            Payments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showPage('class-groups')">
+                            <span class="nav-icon">🏫</span>
+                            Class Groups
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <main class="main-content">
+                <div class="header">
+                    <h1>Dashboard Overview</h1>
+                    <div class="user-info">
+                        <div class="avatar">AD</div>
+                        <span>Admin User</span>
+                        <button class="logout-btn" onclick="showPage('login')">Logout</button>
+                    </div>
+                </div>
+
+                <div id="admin-overview" class="admin-section">
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #48bb78, #38a169);">👥</div>
+                                <div class="card-title">Total Users</div>
+                            </div>
+                            <div class="card-value" style="color: #48bb78;">1,247</div>
+                            <div class="card-subtitle">+12% from last month</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">📚</div>
+                                <div class="card-title">Active Courses</div>
+                            </div>
+                            <div class="card-value" style="color: #667eea;">89</div>
+                            <div class="card-subtitle">+5 new this week</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #ed8936, #dd6b20);">📝</div>
+                                <div class="card-title">Exams Taken</div>
+                            </div>
+                            <div class="card-value" style="color: #ed8936;">3,456</div>
+                            <div class="card-subtitle">This month</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #38b2ac, #319795);">💰</div>
+                                <div class="card-title">Revenue</div>
+                            </div>
+                            <div class="card-value" style="color: #38b2ac;">$24,567</div>
+                            <div class="card-subtitle">This month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-users" class="admin-section" style="display: none;">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>John Smith</td>
+                                    <td>john.smith@email.com</td>
+                                    <td>Teacher</td>
+                                    <td><span class="status active">Active</span></td>
+                                    <td>2024-01-15</td>
+                                    <td>
+                                        <button class="btn-secondary">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Sarah Johnson</td>
+                                    <td>sarah.j@email.com</td>
+                                    <td>Student</td>
+                                    <td><span class="status active">Active</span></td>
+                                    <td>2024-02-20</td>
+                                    <td>
+                                        <button class="btn-secondary">Edit</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Mike Wilson</td>
+                                    <td>mike.w@email.com</td>
+                                    <td>Student</td>
+                                    <td><span class="status pending">Pending</span></td>
+                                    <td>2024-03-10</td>
+                                    <td>
+                                        <button class="btn-secondary">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="admin-courses" class="admin-section" style="display: none;">
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Mathematics Advanced</div>
+                            </div>
+                            <div class="card-subtitle">45 students enrolled</div>
+                            <div style="margin-top: 15px;">
+                                <span class="status active">Active</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Physics Fundamentals</div>
+                            </div>
+                            <div class="card-subtitle">32 students enrolled</div>
+                            <div style="margin-top: 15px;">
+                                <span class="status active">Active</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Chemistry Basics</div>
+                            </div>
+                            <div class="card-subtitle">28 students enrolled</div>
+                            <div style="margin-top: 15px;">
+                                <span class="status pending">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Teacher Dashboard -->
+    <div id="teacher-dashboard" class="page">
+        <div class="dashboard teacher-theme">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Teacher Portal</h2>
+                    <p>Instructor Dashboard</p>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" onclick="showTeacherSection('overview')">
+                            <span class="nav-icon">📊</span>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showTeacherSection('classes')">
+                            <span class="nav-icon">🏫</span>
+                            My Classes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showTeacherSection('students')">
+                            <span class="nav-icon">👨‍🎓</span>
+                            Students
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showTeacherSection('exams')">
+                            <span class="nav-icon">📝</span>
+                            Exams
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="showPage('reports')">
+                            <span class="nav-icon">📈</span>
+                            Grade Reports
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <main class="main-content">
+                <div class="header">
+                    <h1>Teacher Dashboard</h1>
+                    <div class="user-info">
+                        <div class="avatar">JS</div>
+                        <span>John Smith</span>
+                        <button class="logout-btn" onclick="showPage('login')">Logout</button>
+                    </div>
+                </div>
+
+                <div id="teacher-overview" class="teacher-section">
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #48bb78, #38a169);">🏫</div>
+                                <div class="card-title">My Classes</div>
+                            </div>
+                            <div class="card-value" style="color: #48bb78;">6</div>
+                            <div class="card-subtitle">Active classes</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">👨‍🎓</div>
+                                <div class="card-title">Total Students</div>
+                            </div>
+                            <div class="card-value" style="color: #667eea;">127</div>
+                            <div class="card-subtitle">Across all classes</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background: linear-gradient(135deg, #ed8936, #dd6b20);">📝</div>
+                                <div class="card-title">Pending Grades</div>
+                            </div>
+                            <div class="card-value" style="color: #ed8936;">23</div>
+                            <div class="card-subtitle">Need attention</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="teacher-classes" class="teacher-section" style="display: none;">
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Mathematics - Grade 10</div>
+                            </div>
+                            <div class="card-subtitle">25 students • Mon, Wed, Fri 9:00 AM</div>
+                            <div style="margin-top: 15px;">
+                                <button class="btn-secondary">View Class</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Algebra - Grade 9</div>
+                            </div>
+                            <div class="card-subtitle">22 students • Tue, Thu 10:30 AM</div>
+                            <div style="margin-top: 15px;">
+                                <button class="btn-secondary">View Class</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="teacher-students" class="teacher-section" style="display: none;">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Class</th>
+                                    <th>Grade</th>
+                                    <th>Attendance</th>
+                                    <th>Last Activity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Emma Wilson</td>
+                                    <td>Math Grade 10</td>
+                                    <td>A-</td>
+                                    <td>95%</td>
+                                    <td>2 hours ago</td>
+                                </tr>
+                                <tr>
+                                    <td>Alex Johnson</td>
+                                    <td>Algebra Grade 9</td>
+                                    <td>B+</td>
+                                    <td>87%</td>
+                                    <td>1 day ago</td>
+                                </tr>
+                                <tr>
+                                    <td>Sophie Brown</td>
+                                    <td>Math Grade 10</t
