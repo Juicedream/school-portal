@@ -13,8 +13,28 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { getCurrentUser } from "@/lib/auth-helpers"
+import {redirect} from "next/navigation"
 
-export default function Page() {
+export default async function Page() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
+  // You can also check user role here if needed
+  switch(user.role){
+    case "ADMIN":
+      redirect("/dashboard/admin");
+      break;
+    case "TEACHER":
+      redirect("/dashboard/teacher");
+      break;
+    case "STUDENT":
+      redirect("/dashboard/student");
+      break;
+    default:
+      redirect("/login");
+  }
   return (
     <SidebarProvider
       style={
@@ -53,5 +73,5 @@ export default function Page() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
