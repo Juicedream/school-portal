@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function UnauthorizedPage() {
   return (
@@ -8,14 +8,14 @@ export default function UnauthorizedPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center text-red-600">
-            Access Denied
+           🚫 Access Denied
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           <p className="mb-4">You don't have permission to access this page.</p>
-          <Link href="/dashboard">
+          {/* <Link href="/dashboar">
             <Button>Go to Dashboard</Button>
-          </Link>
+          </Link> */}
         </CardContent>
       </Card>
     </div>

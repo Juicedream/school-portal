@@ -29,6 +29,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { Button } from "./ui/button"
+import { signOut } from "next-auth/react"
 
 export function NavUser({
   user,
@@ -103,8 +105,10 @@ export function NavUser({
             </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem>
+              <Button variant={"outline"} onClick={() => signOut()} className="cursor-pointer">
               <LogOut />
               Log out
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
